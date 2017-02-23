@@ -1,0 +1,5 @@
+acl local {
+{%- for ip in ip_list %}
+    {{ ip }};
+{%- endfor %}
+}
