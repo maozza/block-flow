@@ -29,9 +29,15 @@ def write_conf(conf,location,backup=True):
     with open(location,'w') as conf_file:
         _ = conf_file.write(conf)
 
+class CommanFail(Exception):
+    pass
 
-def reload_service():
-    return
+def reload_service(commands_list):
+    for command in commands_list:
+        exit_status = os.system(command)
+        if exit_status > 0:
+            raise CommanFail("Command %s failed with status %s"%(command,exit_status))
+    return True
 
 
 
