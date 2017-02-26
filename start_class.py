@@ -22,13 +22,13 @@ class TaskerDo:
         self.sched = BlockingScheduler()
         self.set_scheduler(self.run, self.config['generate']['schedule'])
 
-    def set_scheduler(self,job,schedule):
+    def set_scheduler(self,job,schedule,args=None):
         '''
         set schedual jobs
         :param schedule: dict, contain 'name', 'trigger' =[cron|interval|more apscheduler on web] , and params minuts,second, and more on apscheduler
         :return: None
         '''
-        self.sched.add_job(job, trigger=schedule['trigger'], name=schedule['name'],**schedule['params'])
+        self.sched.add_job(job, args=args,trigger=schedule['trigger'], name=schedule['name'],**schedule['params'])
 
 
     def stat(self):
