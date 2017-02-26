@@ -1,44 +1,41 @@
-import redis
-from jinja2 import Template
-import os
-from _datetime import datetime
-
-redis_host = "localhost"
-client = redis.Redis(host=redis_host)
+from start_class import TaskerDo
+import signal
 
 
-def create_conf(template_file,**kwargs):
-    with open(template_file) as t:
-        template_str = t.read()
-    t=Template(template_str)
-    return t.render(**kwargs)
+def handler(signum,frame):
+    raise KeyboardInterrupt("Recive kill signal %s"%(signum,))
 
-def redis_push_ip_list(ip_list,expiration):
-    for key in ip_list:
-        _ = client.set(key,None,ex=expiration)
-    return  True
 
-def redis_get_ips_list():
-    ips = client.keys('*')
-    return [i.decode() for i in ips]
+def get_ips_from_file():
+    file = '/home/mozzi/test.list'
+    ip_list = []
+    try:
+        with open(file) as f:
+            for line in f:
+                ip_list.append(line.rstrip())
+    except FileNotFoundError:
+        pass
+    return ip_list
 
-def write_conf(conf,location,backup=True):
-    if backup and os.path.exists(location):
-        date = datetime.now().strftime('%y%m%d%H%M%S')
-        os.rename(location,location +'.'+ date)
-    with open(location,'w') as conf_file:
-        _ = conf_file.write(conf)
 
-class CommanFail(Exception):
-    pass
+if __name__ == '__main__':
+    '''
+    examples:
+    '''
 
-def reload_service(commands_list):
-    for command in commands_list:
-        exit_status = os.system(command)
-        if exit_status > 0:
-            raise CommanFail("Command %s failed with status %s"%(command,exit_status))
-    return True
-
+    i = TaskerDo('config/configuration.yml')
+    i.ip_list = get_ips_from_file()
+    #i.ip_list = ['216.239.32.10', '216.239.34.10', '216.239.36.10', '216.239.38.10']
+    '''
+    Add any job here
+    '''
+    schedule=dict(name="get ip from file", trigger='interval', params = dict(seconds=10))
+    i.set_scheduler(job=get_ips_from_file,schedule=schedule)
+    signal.signal(signal.SIGTERM,handler)
+    try:
+        i.stat()
+    except KeyboardInterrupt:
+        i.stop()
 
 
 
