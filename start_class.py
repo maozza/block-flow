@@ -6,8 +6,8 @@ from _datetime import datetime
 import logging
 import ipaddress
 from apscheduler.schedulers.background import BlockingScheduler
-#from apscheduler.schedulers.background import BackgroundScheduler
-#import signal
+import subprocess
+
 
 
 class TaskerDo:
@@ -25,7 +25,7 @@ class TaskerDo:
     def set_scheduler(self,job,schedule,args=None):
         '''
         set schedual jobs
-        :param schedule: dict, contain 'name', 'trigger' =[cron|interval|more apscheduler on web] , and params minuts,second, and more on apscheduler
+        :param schedule: dict, contain 'name', 'trigger' =[cron|interval|more apscheduler on web] , and params minuets,second, and more on apscheduler
         :return: None
         '''
         self.sched.add_job(job, args=args,trigger=schedule['trigger'], name=schedule['name'],**schedule['params'])
@@ -60,7 +60,7 @@ class TaskerDo:
                     try:
                         if self.reload_services(command):
                             logging.info("Success")
-                    except CommanFail as e:
+                    except CommandFail as e:
                         self.logger.error(e)
                         break
             else:
@@ -68,7 +68,7 @@ class TaskerDo:
 
     def is_diff(self, content_str, current_file):
         '''
-        Compair new version to existing one
+        Compare new version to existing one
         :param content_str: string, new version content string
         :param current_file: file, existing file
         :return: bool, true is different
@@ -164,13 +164,13 @@ class TaskerDo:
         :return: bool, status
         '''
         for command_str in commands_list:
-            exit_status = os.system(command_str)
+            exit_status,output = subprocess.getstatusoutput(command_str)
             if exit_status > 0:
-                raise CommanFail("Command %s failed with status %s" % (command_str, exit_status))
+                raise CommandFail("Command %s failed with status %s output: %s" % (command_str, exit_status, output))
         return True
 
 
-class CommanFail(Exception):
+class CommandFail(Exception):
     pass
 
 
