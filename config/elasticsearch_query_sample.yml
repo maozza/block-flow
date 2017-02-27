@@ -1,0 +1,27 @@
+---
+
+minutes_until_now : 1000
+index_date_format : '%Y.%m.26'
+index: "logstash-{{ index_date_format }}"
+timeout: 10
+host : "elasticseach_host.example.com"
+limit: 2
+
+
+query_body:
+      query:
+        bool:
+          must:
+            - query_string:
+                query: "this AND that OR that"
+            - range:
+                "@timestamp":
+                    format: "epoch_millis"
+                    lte: "{{ lte }}"
+                    gte: "{{ gte }}"
+      aggs:
+         ip:
+          terms:
+            size: 20
+            field: "ip.keyword"
+      size: 0

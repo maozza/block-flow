@@ -91,3 +91,8 @@ ENV/
 
 # pycharm IDE
 .idea
+
+
+# local configuration file
+elasticsearch_query.yml
+configuration.yml

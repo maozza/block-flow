@@ -1,0 +1,17 @@
+---
+settings:
+    redis:
+        host: "localhost"
+    logfile: "/var/tmp/logfile.log"
+generate:
+    template: "templates/test.acl"
+    file: "/var/tmp/test.acl"
+    schedule:
+      name: "file generation"
+      trigger: "interval"
+      params:
+        seconds: 10
+    reload_commands: # examples
+     - "scripts/varnish_reload.sh"
+     - "service httpd reload"
+bad_ip_expiration: 3600
