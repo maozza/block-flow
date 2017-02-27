@@ -12,6 +12,6 @@ generate:
       params:
         seconds: 10
     reload_commands: # examples
-     - "scripts/varnish_reload.sh"
+     - "scripts/varnish_reload_example.sh"
      - "service httpd reload"
 bad_ip_expiration: 3600
