@@ -127,7 +127,7 @@ class TaskerDo:
         :param expiration: int second
         :return: bool status
         '''
-        ip_list = [ip for ip in ip_list if ipaddress.ip_address(ip).is_global]
+        ip_list = [ip for ip in ip_list if not ipaddress.ip_address(ip).is_private]
         if len(ip_list) == 0:
             raise ValueError('Empty list supplied')
         for key in ip_list:
