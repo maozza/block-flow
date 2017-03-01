@@ -31,7 +31,7 @@ class TaskerDo:
         self.sched.add_job(job, args=args,trigger=schedule['trigger'], name=schedule['name'],**schedule['params'])
 
 
-    def stat(self):
+    def start(self):
         self.sched.start()
 
     def stop(self):
